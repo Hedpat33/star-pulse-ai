@@ -1,0 +1,32 @@
+{
+  "tags": [
+    "ai",
+    "llm",
+    "genai",
+    "machine-learning",
+    "deep-learning",
+    "generative-ai",
+    "rag",
+    "large-language-model",
+    "gpt",
+    "diffusion-model",
+    "reinforcement-learning",
+    "nlp",
+    "computer-vision",
+    "pytorch",
+    "tensorflow",
+    "agent",
+    "ai-agents",
+    "mcp",
+    "transformers",
+    "chatgpt",
+    "agents",
+    "ai-skills",
+    "claude-code"
+  ],
+  "top_n": 10,
+  "min_stars": 3000,
+  "output_dir": "./output",
+  "state_dir": "./state",
+  "history_retention_days": 90
+}

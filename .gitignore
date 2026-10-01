@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Runtime artifacts
+output/
+state/
+*.tmp
+
+# Local design notes (never commit)
+docs/superpowers/
+
+# Secrets (never commit tokens)
+.env
+.env.*
+*.pem
+*.key
+secrets.*
+
+# Editors / OS
+.codebuddy/
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
