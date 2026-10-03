@@ -1,6 +1,7 @@
 """Integration tests for starpulse.cli with a faked GitHub client (no network)."""
 
 import json
+import os
 import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
@@ -57,6 +58,13 @@ class CliTest(unittest.TestCase):
             ),
             encoding="utf-8",
         )
+        # Isolate from a developer machine that really has FEISHU_* set:
+        # tests must never hit the network unless they mock it explicitly.
+        env_patcher = mock.patch.dict(
+            os.environ, {"FEISHU_WEBHOOK_URL": "", "FEISHU_SECRET": ""}
+        )
+        env_patcher.start()
+        self.addCleanup(env_patcher.stop)
         FakeClient.result = FetchResult()
 
     def run_cli(self):
@@ -233,6 +241,53 @@ class CliTest(unittest.TestCase):
                   or line.startswith("| 3 ")]
         self.assertEqual(len(ranked), 2)
         self.assertIn("TOP 2", board)
+
+    def test_second_run_invokes_notify_bridge(self):
+        self.seed_previous()
+        FakeClient.result = FetchResult(pool=[repo("a/one", 9600)])
+        with mock.patch.object(cli, "GitHubClient", FakeClient), \
+                mock.patch.object(cli, "notify_board") as notify:
+            code = cli.main(["--config", str(self.config_path)])
+        self.assertEqual(code, cli.EXIT_OK)
+        notify.assert_called_once()
+        prev_arg, current_arg = notify.call_args.args
+        self.assertIsNotNone(prev_arg)
+        self.assertEqual(
+            [r.full_name for r in current_arg.top], ["a/one"]
+        )
+
+    def test_baseline_run_skips_notify(self):
+        FakeClient.result = FetchResult(pool=[repo("a/one", 9500)])
+        with mock.patch.object(cli, "GitHubClient", FakeClient), \
+                mock.patch.object(cli, "notify_board") as notify:
+            code = cli.main(["--config", str(self.config_path)])
+        self.assertEqual(code, cli.EXIT_OK)
+        notify.assert_not_called()
+
+    def test_unconfigured_feishu_leaves_exit_code_ok(self):
+        # Weak dependency end to end: no FEISHU_WEBHOOK_URL in env, the
+        # real bridge quietly skips and the run still exits 0.
+        self.seed_previous()
+        FakeClient.result = FetchResult(pool=[repo("a/one", 9600)])
+        with mock.patch.dict(os.environ, {}, clear=True):
+            code = self.run_cli()
+        self.assertEqual(code, cli.EXIT_OK)
+
+    def test_send_failure_leaves_exit_code_ok(self):
+        from notify.channels import ChannelError
+
+        self.seed_previous()
+        FakeClient.result = FetchResult(pool=[repo("a/one", 9600)])
+        with mock.patch.dict(
+            os.environ, {"FEISHU_WEBHOOK_URL": "https://example.com/hook"}
+        ), mock.patch(
+            "notify.channels.feishu.FeishuChannel.send",
+            side_effect=ChannelError(19021, "sign fail"),
+        ):
+            code = self.run_cli()
+        self.assertEqual(code, cli.EXIT_OK)
+        # The board itself must still be written.
+        self.assertIn("+600", self.read_board())
 
 
 if __name__ == "__main__":

@@ -70,6 +70,15 @@ class LoadConfigTest(unittest.TestCase):
             load_config(self.cfg_path, env={})
         self.assertIn("token", str(ctx.exception))
 
+    def test_notify_section_in_file_rejected(self):
+        write_config(
+            self.cfg_path,
+            notify={"feishu": {"webhook_url": "https://example.com/hook"}},
+        )
+        with self.assertRaises(ConfigError) as ctx:
+            load_config(self.cfg_path, env={})
+        self.assertIn("FEISHU_WEBHOOK_URL", str(ctx.exception))
+
     def test_invalid_top_n_rejected(self):
         write_config(self.cfg_path, top_n=0)
         with self.assertRaises(ConfigError) as ctx:

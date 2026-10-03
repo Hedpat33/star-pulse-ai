@@ -60,6 +60,12 @@ def load_config(
             "'token' must not be stored in config file; "
             "use GITHUB_TOKEN env var or --token flag"
         )
+    for key in ("notify", "feishu", "webhook_url"):
+        if key in raw:
+            raise ConfigError(
+                f"'{key}' must not be stored in config file; "
+                "use FEISHU_WEBHOOK_URL env var"
+            )
 
     tags = _require_str_list(raw, "tags")
     if not tags:
