@@ -54,7 +54,6 @@ def _build(prev: Snapshot, current: Snapshot, rows: Sequence[Repo]) -> dict:
             ),
             "text_size": "notation",
             "text_color": "grey",
-            "italic": True,
         },
         _column_set(
             [f"**{label}**" for label in HEADER_LABELS],
