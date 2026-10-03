@@ -47,13 +47,16 @@ def build_board_card(prev: Snapshot, current: Snapshot) -> dict:
 def _build(prev: Snapshot, current: Snapshot, rows: Sequence[Repo]) -> dict:
     elements: list = [
         {
+            # colour lives inside content: JSON 2.0 markdown rejects a
+            # text_color attribute (200621); <font> tags are the sanctioned way
             "tag": "markdown",
             "content": (
+                f"<font color='grey'>"
                 f"{prev.generated_at:%Y-%m-%d %H:%M}"
                 f" / {current.generated_at:%Y-%m-%d %H:%M}"
+                f"</font>"
             ),
             "text_size": "notation",
-            "text_color": "grey",
         },
         _column_set(
             [f"**{label}**" for label in HEADER_LABELS],

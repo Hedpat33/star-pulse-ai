@@ -59,7 +59,10 @@ class BuildBoardCardTest(unittest.TestCase):
         )
         line = card["body"]["elements"][0]
         self.assertEqual(line["tag"], "markdown")
-        self.assertEqual(line["content"], "2026-10-03 00:18 / 2026-10-03 07:00")
+        self.assertEqual(
+            line["content"],
+            "<font color='grey'>2026-10-03 00:18 / 2026-10-03 07:00</font>",
+        )
         self.assertEqual(line["text_size"], "notation")
 
     def test_header_row_grey_with_four_weighted_columns(self):
