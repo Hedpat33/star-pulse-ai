@@ -30,26 +30,28 @@ python -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-**2. (Optional) set a GitHub token**
-
-```bash
-export GITHUB_TOKEN=ghp_xxx
-```
-
-It runs without a token too; the API rate limit is just stricter.
-
-**3. Run**
+**2. Run**
 
 ```bash
 .venv/bin/python -m starpulse
 ```
 
-**4. Check the results**
+**3. Check the results**
 
 - Leaderboard: `output/YYYYMMDD.md`
 - Run state: `state/` directory (maintained automatically, no manual handling needed)
 
 Common settings (tags, board size, star threshold) live in [config.json](config.json).
+
+**(Optional) Environment variables**
+
+```bash
+export GITHUB_TOKEN=ghp_xxx                               # raises the API rate limit; runs fine without it
+export FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxx   # posts a TOP 10 card to a Feishu group after each board
+export FEISHU_SECRET=xxx                                  # only needed when the bot has signature verification enabled
+```
+
+Without `FEISHU_WEBHOOK_URL` notifications are skipped, and a delivery failure never affects the run.
 
 ## License
 

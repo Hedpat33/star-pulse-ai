@@ -12,6 +12,7 @@ from typing import List, Optional, Sequence
 
 from starpulse.config import Config, ConfigError, load_config
 from starpulse.github_client import GitHubClient, dedupe
+from starpulse.notify_bridge import notify_board
 from starpulse.render import render, select_board
 from starpulse.snapshot import (
     Snapshot,
@@ -112,6 +113,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         except OSError as exc:
             logger.error("failed to write ranking file: %s", exc)
             return EXIT_FATAL
+        notify_board(prev, current)
 
     try:
         save_snapshot(config.state_dir, current)

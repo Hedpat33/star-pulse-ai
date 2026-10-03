@@ -30,26 +30,28 @@ python -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-**2. （可选）设置 GitHub Token**
-
-```bash
-export GITHUB_TOKEN=ghp_xxx
-```
-
-不设置也可以运行，只是 API 限流更严格。
-
-**3. 运行**
+**2. 运行**
 
 ```bash
 .venv/bin/python -m starpulse
 ```
 
-**4. 查看结果**
+**3. 查看结果**
 
 - 排行榜：`output/YYYYMMDD.md`
 - 运行状态：`state/` 目录（自动维护，无需手动处理）
 
 标签、榜单条数、Star 门槛等常用配置见 [config.json](config.json)。
+
+**（可选）环境变量**
+
+```bash
+export GITHUB_TOKEN=ghp_xxx                               # 提升 API 限流额度，不设也能运行
+export FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/xxx   # 每次生成榜单后向飞书群发一张 TOP 10 卡片
+export FEISHU_SECRET=xxx                                  # 机器人开启「签名校验」时才需要
+```
+
+未设置 `FEISHU_WEBHOOK_URL` 即跳过通知，发送失败也不影响榜单生成。
 
 ## License
 
